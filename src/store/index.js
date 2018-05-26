@@ -5,7 +5,7 @@ import router from '../router'
 
 
 vue.use(vuex)
-
+//itunes
 var itunes = axios.create({
   baseURL: 'https://itunes.apple.com/search?term=',
   timeout: 3000

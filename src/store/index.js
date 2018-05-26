@@ -59,7 +59,7 @@ export default new vuex.Store({
       itunes.get(''+payload)
       .then(res => {
         console.log(res)
-        commit('setSongs', res.data)
+        commit('setSongs', res.data.results)
       })
     }
   }

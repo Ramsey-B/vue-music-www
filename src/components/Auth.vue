@@ -3,8 +3,8 @@
     <div class="login" v-if="showLogin">
       <h1>Login</h1>
       <form v-on:submit.prevent="login" class="form">
-        <input class="input text-white" type="email" name="email" placeholder=" email" id="email" v-model="user.email">
-        <input class="input text-white" type="text" name="email" placeholder=" password" id="name" v-model="user.password">
+        <input class="input" type="email" name="email" placeholder=" email" id="email" v-model="user.email">
+        <input class="input" type="text" name="email" placeholder=" password" id="name" v-model="user.password">
         <button type="submit">Login</button>
       </form>
       <p class="user">Not a user ?

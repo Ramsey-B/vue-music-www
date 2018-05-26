@@ -19,11 +19,9 @@ var server = axios.create({
 export default new vuex.Store({
   state: {
     user: {
-      email: '',
-      password: '',
-      displayName: ''
     },
-    songs: []
+    songs: [],
+    playlists: []
   },
   mutations: {
     setUser(state, user) {
@@ -31,13 +29,16 @@ export default new vuex.Store({
     },
     setSongs(state, songs) {
       state.songs = songs
+    },
+    setPlaylists(state, playlists) {
+      state.playlists = playlists
     }
   },
   actions: {
     login({ dispatch, commit }, user) {
       server.post('/login', user)
         .then(res => {
-          console.log(res)
+          console.log(res.data.data)
           commit('setUser', res.data.data)
           router.push('/')
         })
@@ -61,6 +62,13 @@ export default new vuex.Store({
         console.log(res)
         commit('setSongs', res.data.results)
       })
+    },
+    getPlaylists({dispatch,commit, state}) {
+      server.post('/playlists', state.user)
+       .then(res => {
+         console.log(res)
+         commit('setPlaylists', res.data)
+       })
     }
   }
 })

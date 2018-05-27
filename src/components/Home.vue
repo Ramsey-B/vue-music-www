@@ -28,7 +28,7 @@
             <button @click="toggleAdd">New Playlist</button>
           </div>
           <form v-on:submit.prevent="search" v-if="showAdd">
-            <input type="text" placeholder="Playlist Title" v-model="newList">
+            <input type="text" placeholder="Playlist Title" v-model="newList.title">
             <button @click="createPlaylist">Add</button>
           </form>
         </div>
@@ -44,7 +44,9 @@
       return {
         query: '',
         showAdd: false,
-        newList: ''
+        newList: {
+          title: ''
+        }
       }
     },
     computed: {

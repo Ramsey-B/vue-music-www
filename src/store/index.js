@@ -13,7 +13,8 @@ var itunes = axios.create({
 
 var server = axios.create({
   baseURL: 'http://localhost:3000',
-  timeout: 3000
+  timeout: 3000,
+  withCredentials: true,
 })
 
 export default new vuex.Store({
@@ -64,17 +65,13 @@ export default new vuex.Store({
       })
     },
     getPlaylists({dispatch,commit, state}) {
-      server.post('/playlists', state.user)
+      server.get('/playlists')
        .then(res => {
          console.log(res)
          commit('setPlaylists', res.data)
        })
     },
-    createPlaylist({dispatch, commit, state}, list) {
-      var payload = {
-        title: list,
-        userId: state.user._id
-      }
+    createPlaylist({dispatch, commit, state}, payload) {
       server.post('/playlist', payload)
        .then(res => {
          console.log(res)

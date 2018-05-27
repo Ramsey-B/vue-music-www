@@ -69,6 +69,16 @@ export default new vuex.Store({
          console.log(res)
          commit('setPlaylists', res.data)
        })
+    },
+    createPlaylist({dispatch, commit, state}, list) {
+      var payload = {
+        title: list,
+        userId: state.user._id
+      }
+      server.post('/playlist', payload)
+       .then(res => {
+         console.log(res)
+       })
     }
   }
 })

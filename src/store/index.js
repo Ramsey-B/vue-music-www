@@ -22,7 +22,8 @@ export default new vuex.Store({
     user: {
     },
     songs: [],
-    playlists: []
+    playlists: [],
+    activeList: {}
   },
   mutations: {
     setUser(state, user) {
@@ -33,6 +34,9 @@ export default new vuex.Store({
     },
     setPlaylists(state, playlists) {
       state.playlists = playlists
+    },
+    setActiveList(state, list){
+      state.activeList = list
     }
   },
   actions: {
@@ -65,7 +69,7 @@ export default new vuex.Store({
       })
     },
     getPlaylists({dispatch,commit, state}) {
-      server.get('/playlists')
+      server.get('/playlists/')
        .then(res => {
          console.log(res)
          commit('setPlaylists', res.data)
@@ -74,8 +78,20 @@ export default new vuex.Store({
     createPlaylist({dispatch, commit, state}, payload) {
       server.post('/playlist', payload)
        .then(res => {
+         dispatch('getPlaylists')
+       })
+    },
+    addSong({dispatch, commit}, list){
+      server.put('/playlist/' + list._id, list)
+       .then(res => {
          console.log(res)
        })
+    },
+    getPlaylist({dispatch, commit}, id) {
+      server.get('/playlist/' +id) 
+        .then(res => {
+          commit('setActiveList', res.data)
+        })
     }
   }
 })

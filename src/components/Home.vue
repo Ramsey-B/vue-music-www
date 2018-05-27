@@ -21,16 +21,12 @@
         </audio>
         <div>
           <a :href="song.trackViewUrl" target="_blank" class="btn btn-outline-success mt-2">Purchase</a>
-          <div v-if="!showAdd">
-            <select name="Playlists" id="" @click="getPlaylists">
-              <option v-for="playlist in playlist">{{playlist.title}}</option>
+          <div class="form-group">
+            <select name="Playlists" class="form-control" id="" v-model="activeList">
+              <option v-for="playlist in playlists" :value="playlist">{{playlist.title}}</option>
             </select>
-            <button @click="toggleAdd">New Playlist</button>
+            <button @click="addSong(song)">Add Song</button>
           </div>
-          <form v-on:submit.prevent="search" v-if="showAdd">
-            <input type="text" placeholder="Playlist Title" v-model="newList.title">
-            <button @click="createPlaylist">Add</button>
-          </form>
         </div>
       </div>
     </div>
@@ -40,20 +36,23 @@
 <script>
   export default {
     name: 'Home',
+    mounted() {
+      this.$store.dispatch('getPlaylists')
+    },
     data() {
       return {
         query: '',
-        showAdd: false,
         newList: {
           title: ''
-        }
+        },
+        activeList: {}
       }
     },
     computed: {
       songs() {
         return this.$store.state.songs
       },
-      playlist() {
+      playlists() {
         return this.$store.state.playlists
       }
     },
@@ -64,15 +63,13 @@
       addToPlaylist(song) {
         this.$store.dispatch('addSong', song)
       },
-      getPlaylists() {
-        this.$store.dispatch('getPlaylists')
-      },
-      toggleAdd() {
-        this.showAdd = !this.showAdd
-      },
       createPlaylist() {
         this.$store.dispatch('createPlaylist', this.newList)
         this.showAdd = !this.showAdd
+      },
+      addSong(song) {
+        this.activeList.songs.push(song)
+        this.$store.dispatch('addSong', this.activeList)
       }
     }
   }

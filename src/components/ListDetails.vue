@@ -3,24 +3,23 @@
     <h2>{{activeList.title}}</h2>
     <div class="results row" v-if="activeSong">
       <div class="card col-md-4 col-xs-12 songs-box">
-        <a>
+        <a @click="togglePlay">
           <h4>{{activeSong.trackName}}</h4>
         </a>
         <h5>{{activeSong.artistName}}</h5>
-        <a>
+        <a @click="togglePlay">
           <img class="play-img" :src="activeSong.artworkUrl100">
         </a>
-        <audio class="audio-player" controls>
-          <source :src="activeSong.previewUrl" type="audio/mp3">
-        </audio>
       </div>
     </div>
     <div class="row">
-      <draggable v-model="songs">
-        <div class="col-12 d-flex justify-content-row" :key="song" v-for="song in songs">
+      <draggable v-model="songs" v-on:change="editList">
+        <div class="col-12 d-flex justify-content-row" :key="song._id" v-for="song in songs">
           <button @click="playSong(song)" v-if="song._id != activeSong._id">Play</button>
-          <button @click="playSong(song)" v-if="song._id == activeSong._id">Pause</button>
-          <h4>{{song.trackName}}</h4>
+          <button @click="togglePlay" v-if="song._id == activeSong._id && isPlaying == true">Pause</button>
+          <button @click="togglePlay" v-if="song._id == activeSong._id && isPlaying == false">Play</button>
+          <h4>{{song.trackName}} </h4>
+          <h5> -{{song.artistName}}</h5>
         </div>
       </draggable>
     </div>
@@ -29,6 +28,7 @@
 
 <script>
   import draggable from 'vuedraggable'
+  import howler from 'vue-howler'
 
   export default {
     name: 'listDetails',
@@ -42,7 +42,10 @@
     data() {
       return {
         activeSong: {},
-        songs: []
+        songs: [],
+        isPlaying: false,
+        player: null,
+        songsIndex: 0
       }
     },
     computed: {
@@ -51,21 +54,58 @@
       }
     },
     methods: {
+      initPlayer() {
+        this.player = new Howl({
+          src: this.songs[this.songsIndex].previewUrl,
+          autoplay: true,
+          volume: 0.5,
+          html5: true,
+          onend: function () {
+            this.changeSong()
+            this.initPlayer()
+          }
+        });
+      },
       playSong(song) {
+        if(this.player) {
+          this.player.pause()
+        }
+        this.isPlaying = true
         this.activeSong = song
+        this.songsIndex = this.songs.findIndex(item => {return item._id == song._id})
+        this.initPlayer()
+      },
+      editList() {
+        this.$store.dispatch('editList', this.songs)
+      },
+      togglePlay() {
+        if (this.isPlaying == false) {
+          this.isPlaying = !this.isPlaying
+          this.player.play()
+        } else {
+          this.isPlaying = !this.isPlaying
+          this.player.pause()
+        }
+      },
+      changeSong() {
+        debugger
+        if (this.songsIndex < this.songs.length - 1) {
+          this.songsIndex++
+          this.activeSong = this.songs[this.songsIndex]
+        }
       }
     }
   }
 
   //pause other songs
-  document.addEventListener('play', function (e) {
-    var audios = document.getElementsByTagName('audio');
-    for (var i = 0, len = audios.length; i < len; i++) {
-      if (audios[i] != e.target) {
-        audios[i].pause();
-      }
-    }
-  }, true);
+  // document.addEventListener('play', function (e) {
+  //   var audios = document.getElementsByTagName('audio');
+  //   for (var i = 0, len = audios.length; i < len; i++) {
+  //     if (audios[i] != e.target) {
+  //       audios[i].pause();
+  //     }
+  //   }
+  // }, true);
 </script>
 
 <style>

@@ -28,7 +28,6 @@
 
 <script>
   import draggable from 'vuedraggable'
-  import howler from 'vue-howler'
 
   export default {
     name: 'listDetails',

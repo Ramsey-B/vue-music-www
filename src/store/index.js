@@ -82,7 +82,6 @@ export default new vuex.Store({
        })
     },
     addSong({dispatch, commit}, list){
-      debugger
       server.put('/playlist/' + list._id, list)
        .then(res => {
          console.log(res)

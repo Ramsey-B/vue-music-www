@@ -8,24 +8,22 @@
     </div>
     <div class="results row">
       <div class="card col-md-4 col-xs-12 songs-box" v-for="song in songs">
-        <a>
+        <a @click="initPlayer(song)">
           <h4>{{song.trackName}}</h4>
         </a>
         <h5>{{song.artistName}}</h5>
-        <a>
+        <a @click="initPlayer(song)">
           <img class="play-img" :src="song.artworkUrl100">
         </a>
         <h6>Price: {{song.trackPrice}}</h6>
-        <audio class="audio-player" controls>
-          <source :src="song.previewUrl" type="audio/mp3">
-        </audio>
         <div>
           <a :href="song.trackViewUrl" target="_blank" class="btn btn-outline-success mt-2">Purchase</a>
           <div class="form-group">
             <select name="Playlists" class="form-control" id="" v-model="activeList">
+              <option disabled>Select a Playlist</option>
               <option v-for="playlist in playlists" :value="playlist">{{playlist.title}}</option>
             </select>
-            <button @click="addSong(song)">Add Song</button>
+            <button v-if="activeList" @click="addSong(song)">Add Song</button>
           </div>
         </div>
       </div>
@@ -34,6 +32,7 @@
 </template>
 
 <script>
+  import howler from 'vue-howler'
   export default {
     name: 'Home',
     mounted() {
@@ -45,7 +44,8 @@
         newList: {
           title: ''
         },
-        activeList: {}
+        activeList: {},
+        player: null
       }
     },
     computed: {
@@ -70,6 +70,15 @@
       addSong(song) {
         this.activeList.songs.push(song)
         this.$store.dispatch('addSong', this.activeList)
+      },
+      initPlayer(song) {
+        this.player = null
+        this.player = new Howl({
+          src: song.previewUrl,
+          autoplay: true,
+          volume: 0.5,
+          html5: true
+        });
       }
     }
   }

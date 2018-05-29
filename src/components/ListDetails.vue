@@ -18,8 +18,8 @@
           <button @click="playSong(song)" v-if="song._id != activeSong._id">Play</button>
           <button @click="togglePlay" v-if="song._id == activeSong._id && isPlaying == true">Pause</button>
           <button @click="togglePlay" v-if="song._id == activeSong._id && isPlaying == false">Play</button>
-          <h4>{{song.trackName}} </h4>
-          <h5> -{{song.artistName}}</h5>
+          <h4>{{song.trackName}}-{{song.artistName}}</h4>
+          <button @click="removeSong(song)">Remove</button>
         </div>
       </draggable>
     </div>
@@ -33,7 +33,6 @@
     name: 'listDetails',
     mounted() {
       this.$store.dispatch('getPlaylist', this.$route.params.id)
-      this.songs = this.$store.state.activeList.songs
     },
     components: {
       draggable
@@ -41,7 +40,6 @@
     data() {
       return {
         activeSong: {},
-        songs: [],
         isPlaying: false,
         player: null,
         songsIndex: 0
@@ -50,6 +48,9 @@
     computed: {
       activeList() {
         return this.$store.state.activeList
+      },
+      songs() {
+        return this.$store.state.activeList.songs
       }
     },
     methods: {
@@ -87,11 +88,17 @@
         }
       },
       changeSong() {
-        debugger
         if (this.songsIndex < this.songs.length - 1) {
           this.songsIndex++
           this.activeSong = this.songs[this.songsIndex]
         }
+      },
+      removeSong(song) {
+        var index = this.activeList.songs.findIndex(item => {
+          return item.trackId == song.trackId
+        })
+        this.activeList.songs.splice(index, 1)
+        this.$store.dispatch('editList', this.activeList)
       }
     }
   }

@@ -4,11 +4,13 @@
     <nav class="navbar navbar-light top-header">
       <div>
         <a class="navbar-brand" @click="home">Home</a>
-        <a class="navbar-brand" v-if="user._id" @click="getPosts">Playlists</a>
+        <router-link :to="{ name: 'Playlists'}" class="navbar-brand" v-if="user._id" @click="getPosts">
+          Playlists
+        </router-link>
       </div>
       <a class="navbar-brand" @click="login" v-if="!(user._id)">Sign up/Login</a>
       <div v-if="user._id" class="d-flex flex-column">
-        <a class="navbar-brand">User: {{user.name}}</a>
+        <a class="navbar-brand">User: {{user.displayName}}</a>
         <a class="navbar-brand" @click="signOut">Sign out</a>
       </div>
     </nav>
@@ -41,6 +43,9 @@
       },
       home() {
         this.$router.push('/')
+      },
+      signOut() {
+        this.$store.dispatch('signOut')
       }
   },
     }

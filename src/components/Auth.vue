@@ -14,9 +14,9 @@
     <div class="register" v-if="!showLogin">
       <h1>Register</h1>
       <form v-on:submit.prevent="register">
-        <input class="input text-white" type="email" name="email" placeholder=" email" id="email" v-model="user.email">
-        <input class="input text-white" type="text" name="name" placeholder=" Name" id="name" v-model="user.displayName">
-        <input class="input text-white" type="text" name="email" placeholder=" password" id="name" v-model="user.password">
+        <input class="input" type="email" name="email" placeholder=" email" id="email" v-model="user.email">
+        <input class="input" type="text" name="name" placeholder=" Name" id="name" v-model="user.displayName">
+        <input class="input" type="text" name="email" placeholder=" password" id="name" v-model="user.password">
         <button type="submit">Register</button>
       </form>
       <p>Already a user?

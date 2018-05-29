@@ -19,8 +19,7 @@ var server = axios.create({
 
 export default new vuex.Store({
   state: {
-    user: {
-    },
+    user: {},
     songs: [],
     playlists: [],
     activeList: {}
@@ -71,17 +70,19 @@ export default new vuex.Store({
     getPlaylists({dispatch,commit, state}) {
       server.get('/playlists/')
        .then(res => {
-         console.log(res)
-         commit('setPlaylists', res.data)
+         var playlists = res.data.sort((a, b) => {
+          return b.songs.length - a.songs.length
+         })
+         commit('setPlaylists', playlists)
        })
     },
     createPlaylist({dispatch, commit, state}, payload) {
-      server.post('/playlist', payload)
+      server.post('/new-playlist', payload)
        .then(res => {
          dispatch('getPlaylists')
        })
     },
-    addSong({dispatch, commit}, list){
+    editList({dispatch, commit}, list){
       server.put('/playlist/' + list._id, list)
        .then(res => {
          console.log(res)
@@ -93,9 +94,12 @@ export default new vuex.Store({
           commit('setActiveList', res.data)
         })
     },
-    editList({dispatch, commit, state}, payload) {
-      state.activeList.songs = payload
-      dispatch('addSong', state.activeList)
+    signOut({dispatch, commit, state}) {
+      server.delete('/logout')
+       .then(mess => {
+        commit('setUser', {})
+        router.push('/')
+       })
     }
   }
 })

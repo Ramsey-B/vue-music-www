@@ -26,7 +26,8 @@
       return {
         showAdd: false,
         list: {
-          title: ''
+          title: '',
+          userId: ''
         }
       }
     },

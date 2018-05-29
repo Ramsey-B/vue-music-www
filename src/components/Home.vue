@@ -18,7 +18,7 @@
         <h6>Price: {{song.trackPrice}}</h6>
         <div>
           <a :href="song.trackViewUrl" target="_blank" class="btn btn-outline-success mt-2">Purchase</a>
-          <div class="form-group">
+          <div v-if="user" class="form-group">
             <select name="Playlists" class="form-control" id="" v-model="activeList">
               <option disabled>Select a Playlist</option>
               <option v-for="playlist in playlists" :value="playlist">{{playlist.title}}</option>
@@ -55,22 +55,27 @@
       },
       playlists() {
         return this.$store.state.playlists
+      },
+      user() {
+        return this.$store.state.user
       }
     },
     methods: {
       search() {
         this.$store.dispatch('getSongs', this.query)
       },
-      addToPlaylist(song) {
-        this.$store.dispatch('addSong', song)
-      },
       createPlaylist() {
         this.$store.dispatch('createPlaylist', this.newList)
         this.showAdd = !this.showAdd
       },
       addSong(song) {
-        this.activeList.songs.push(song)
-        this.$store.dispatch('addSong', this.activeList)
+        var index = this.activeList.songs.findIndex(item => {
+          return item.trackId == song.trackId
+        })
+        if (index == -1) {
+          this.activeList.songs.push(song)
+          this.$store.dispatch('editList', this.activeList)
+        }
       },
       initPlayer(song) {
         this.player = null
@@ -97,14 +102,6 @@
     }
   }
 
-  document.addEventListener('play', e => {
-    var audios = document.getElementsByTagName('audio');
-    for (var i = 0, len = audios.length; i < len; i++) {
-      if (audios[i] != e.target) {
-        audios[i].pause();
-      }
-    }
-  }, true);
 </script>
 
 <style>

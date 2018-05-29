@@ -8,11 +8,11 @@
     </div>
     <div class="results row">
       <div class="card col-md-4 col-xs-12 songs-box" v-for="song in songs">
-        <a @click="initPlayer(song)">
+        <a @click="playSong(song)">
           <h4>{{song.trackName}}</h4>
         </a>
         <h5>{{song.artistName}}</h5>
-        <a @click="initPlayer(song)">
+        <a @click="playSong(song)">
           <img class="play-img" :src="song.artworkUrl100">
         </a>
         <h6>Price: {{song.trackPrice}}</h6>
@@ -45,7 +45,8 @@
           title: ''
         },
         activeList: {},
-        player: null
+        player: null,
+        isPlaying: {}
       }
     },
     computed: {
@@ -79,18 +80,31 @@
           volume: 0.5,
           html5: true
         });
+      },
+      playSong(song) {
+        if (this.isPlaying == song) {
+          this.player.pause()
+          this.isPlaying = {}
+        } else if (this.player) {
+          this.player.pause()
+          this.isPlaying = song
+          this.initPlayer(song)
+        } else {
+          this.isPlaying = song
+          this.initPlayer(song)
+        }
       }
     }
   }
 
-document.addEventListener('play', e =>{
+  document.addEventListener('play', e => {
     var audios = document.getElementsByTagName('audio');
-    for(var i = 0, len = audios.length; i < len;i++){
-        if(audios[i] != e.target){
-            audios[i].pause();
-        }
+    for (var i = 0, len = audios.length; i < len; i++) {
+      if (audios[i] != e.target) {
+        audios[i].pause();
+      }
     }
-}, true);
+  }, true);
 </script>
 
 <style>
